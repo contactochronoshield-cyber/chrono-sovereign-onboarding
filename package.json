@@ -1,0 +1,16 @@
+{
+  "name": "chrono-sovereign-onboarding",
+  "version": "0.1.0",
+  "description": "Onboarding server para Chrono Sovereign Cloud - Fase 1",
+  "main": "onboarding-server.js",
+  "scripts": {
+    "start": "node onboarding-server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chrono Sovereign Cloud — Regístrate gratis</title>
+<style>
+  :root {
+    --bg: #0a0f1a;
+    --panel: #121a2b;
+    --accent: #00d4aa;
+    --accent-dim: #0a8a6f;
+    --text: #e8edf5;
+    --text-dim: #8a97ab;
+    --border: #1f2b40;
+    --error: #ff5d5d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 36px 28px;
+    max-width: 440px;
+    width: 100%;
+  }
+  .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+  h1 { font-size: 1.4rem; font-weight: 600; }
+  .subtitle { color: var(--text-dim); font-size: 0.9rem; margin-top: 6px; margin-bottom: 28px; line-height: 1.5; }
+  label { display: block; font-size: 0.82rem; color: var(--text-dim); margin-bottom: 6px; margin-top: 18px; }
+  input {
+    width: 100%; background: #0d1420; border: 1px solid var(--border); color: var(--text);
+    padding: 12px 14px; border-radius: 8px; font-size: 0.95rem; outline: none; transition: border-color 0.15s;
+  }
+  input:focus { border-color: var(--accent); }
+  .hint { font-size: 0.75rem; color: var(--text-dim); margin-top: 6px; }
+  button {
+    width: 100%; background: var(--accent); color: #04140f; border: none; padding: 13px;
+    border-radius: 8px; font-weight: 600; font-size: 0.95rem; margin-top: 26px; cursor: pointer; transition: background 0.15s;
+  }
+  button:hover { background: var(--accent-dim); color: var(--text); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .result { margin-top: 22px; padding: 16px; border-radius: 8px; font-size: 0.85rem; display: none; word-break: break-word; }
+  .result.ok { background: rgba(0, 212, 170, 0.08); border: 1px solid var(--accent-dim); display: block; }
+  .result.err { background: rgba(255, 93, 93, 0.08); border: 1px solid var(--error); color: var(--error); display: block; }
+  .result strong { color: var(--accent); }
+  .result code { display: block; background: #050a12; padding: 8px 10px; border-radius: 6px; margin-top: 6px; font-size: 0.8rem; overflow-x: auto; }
+  footer { text-align: center; margin-top: 24px; font-size: 0.72rem; color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo-row">
+    <span class="dot"></span>
+    <h1>Chrono Sovereign Cloud</h1>
+  </div>
+  <p class="subtitle">
+    Hosting gratis en fase de lanzamiento. Regístrate, sube tu sitio y obtén
+    tu propio subdominio en minutos — sin depender de las nubes de siempre.
+  </p>
+
+  <form id="registerForm">
+    <label for="email">Correo electrónico</label>
+    <input type="email" id="email" required placeholder="tucorreo@ejemplo.com">
+
+    <label for="siteName">Nombre de tu sitio o proyecto</label>
+    <input type="text" id="siteName" required placeholder="Mi Negocio">
+    <div class="hint">Esto define tu subdominio, ej: mi-negocio.chronoshield.cloud</div>
+
+    <button type="submit" id="submitBtn">Crear mi sitio gratis</button>
+  </form>
+
+  <div id="result" class="result"></div>
+
+  <footer>Chrono Shield Networks · Bogotá, Colombia</footer>
+</div>
+
+<script>
+  const API_BASE = "http://localhost:4000";
+
+  const form = document.getElementById("registerForm");
+  const resultDiv = document.getElementById("result");
+  const submitBtn = document.getElementById("submitBtn");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+    const siteName = document.getElementById("siteName").value.trim();
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Creando...";
+    resultDiv.className = "result";
+    resultDiv.style.display = "none";
+
+    try {
+      const res = await fetch(`${API_BASE}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, siteName }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Error desconocido");
+
+      resultDiv.className = "result ok";
+      resultDiv.innerHTML = `
+        <strong>¡Listo! Tu espacio fue reservado.</strong><br><br>
+        Subdominio: <strong>${data.subdomain}</strong><br>
+        Guarda estas credenciales — las necesitas para subir tu sitio:
+        <code>userId: ${data.userId}
+apiKey: ${data.apiKey}</code>
+        <br>${data.nextStep}<br><br><a href="/subir.html" style="color:var(--accent);">→ Ir a subir tu sitio</a><br><br><a href="/subir.html" style="color:var(--accent);">→ Ir a subir tu sitio</a>
+      `;
+      form.reset();
+    } catch (err) {
+      resultDiv.className = "result err";
+      resultDiv.textContent = "Error: " + err.message + " — verifica que el servidor esté corriendo.";
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Crear mi sitio gratis";
+    }
+  });
+</script>
+
+</body>
+</html>
