@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chrono Sovereign Cloud — Mis formularios</title>
+<style>
+  :root {
+    --bg: #0a0f1a; --panel: #121a2b; --accent: #00d4aa; --accent-dim: #0a8a6f;
+    --text: #e8edf5; --text-dim: #8a97ab; --border: #1f2b40; --error: #ff5d5d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; min-height: 100vh; padding: 20px; display: flex; justify-content: center; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 32px 24px; max-width: 560px; width: 100%; height: fit-content; }
+  .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+  h1 { font-size: 1.3rem; font-weight: 600; }
+  .subtitle { color: var(--text-dim); font-size: 0.85rem; margin-top: 6px; margin-bottom: 24px; line-height: 1.5; }
+  label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px; margin-top: 16px; }
+  input { width: 100%; background: #0d1420; border: 1px solid var(--border); color: var(--text); padding: 11px 13px; border-radius: 8px; font-size: 0.9rem; outline: none; font-family: monospace; }
+  input:focus { border-color: var(--accent); }
+  button { width: 100%; background: var(--accent); color: #04140f; border: none; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; margin-top: 20px; cursor: pointer; }
+  button:hover { background: var(--accent-dim); color: var(--text); }
+  .submission { background: #0d1420; border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-top: 14px; font-size: 0.82rem; }
+  .submission .meta { color: var(--text-dim); font-size: 0.72rem; margin-bottom: 8px; }
+  .submission .field { margin-bottom: 4px; word-break: break-word; }
+  .submission .field strong { color: var(--accent); }
+  .empty { color: var(--text-dim); font-size: 0.85rem; margin-top: 20px; text-align: center; }
+  .snippet { background: #050a12; padding: 12px; border-radius: 8px; font-size: 0.72rem; margin-top: 8px; overflow-x: auto; white-space: pre; color: var(--text-dim); }
+  .err { color: var(--error); font-size: 0.85rem; margin-top: 14px; }
+  footer { text-align: center; margin-top: 24px; font-size: 0.72rem; color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo-row">
+    <span class="dot"></span>
+    <h1>Mis formularios</h1>
+  </div>
+  <p class="subtitle">Consulta los envíos de contacto que ha recibido tu sitio.</p>
+
+  <form id="loadForm">
+    <label for="userId">User ID</label>
+    <input type="text" id="userId" required placeholder="ej: 8f3a1c2e-...">
+    <label for="apiKey">API Key</label>
+    <input type="password" id="apiKey" required placeholder="tu api key">
+    <button type="submit">Ver envíos</button>
+  </form>
+
+  <div id="results"></div>
+
+  <p class="subtitle" style="margin-top:28px;">
+    Para recibir envíos, agrega esto a tu sitio (reemplaza TU_USER_ID):
+  </p>
+  <div class="snippet">&lt;form action="/forms/TU_USER_ID/submit" method="POST"&gt;
+  &lt;input type="text" name="nombre" placeholder="Nombre"&gt;
+  &lt;input type="email" name="email" placeholder="Correo"&gt;
+  &lt;textarea name="mensaje" placeholder="Mensaje"&gt;&lt;/textarea&gt;
+  &lt;input type="text" name="_gotcha" style="display:none"&gt;
+  &lt;button type="submit"&gt;Enviar&lt;/button&gt;
+&lt;/form&gt;</div>
+
+  <footer>Chrono Shield Networks · Bogotá, Colombia</footer>
+</div>
+
+<script>
+  const API_BASE = "http://localhost:4000";
+  const form = document.getElementById("loadForm");
+  const results = document.getElementById("results");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const userId = document.getElementById("userId").value.trim();
+    const apiKey = document.getElementById("apiKey").value.trim();
+    results.innerHTML = "";
+
+    try {
+      const res = await fetch(`${API_BASE}/forms/${userId}`, {
+        headers: { "x-api-key": apiKey },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error desconocido");
+
+      if (data.count === 0) {
+        results.innerHTML = '<div class="empty">Aún no has recibido envíos.</div>';
+        return;
+      }
+
+      results.innerHTML = data.submissions
+        .map((s) => {
+          const fields = Object.entries(s.data)
+            .map(([k, v]) => `<div class="field"><strong>${k}:</strong> ${v}</div>`)
+            .join("");
+          return `<div class="submission">
+            <div class="meta">${new Date(s.createdAt).toLocaleString("es-CO")} · ${s.ip}</div>
+            ${fields}
+          </div>`;
+        })
+        .join("");
+    } catch (err) {
+      results.innerHTML = `<div class="err">Error: ${err.message}</div>`;
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -1,14 +1,3 @@
-/**
- * Chrono Sovereign Cloud — Onboarding Server
- * ------------------------------------------
- * Fase 1: hosting gratis sobre hardware propio (Beelink N100 / mini PC)
- *
- * v0.2 — agrega:
- *   - Persistencia real en SQLite (node:sqlite nativo, sin compilar nada)
- *   - Validación de formato de email
- *   - Rate limiting anti-abuso (por IP) en /register y /upload
- */
-
 const express = require("express");
 const multer = require("multer");
 const fs = require("fs");
@@ -57,6 +46,16 @@ db.exec(`
   )
 `);
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS form_submissions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userId TEXT NOT NULL,
+    data TEXT NOT NULL,
+    ip TEXT,
+    createdAt TEXT NOT NULL
+  )
+`);
+
 function insertUser(user) {
   const stmt = db.prepare(`
     INSERT INTO users (userId, email, subdomain, fullDomain, apiKey, status, containerName, createdAt)
@@ -77,9 +76,18 @@ function markDeployed(userId, hostPort) {
   db.prepare("UPDATE users SET status = 'deployed', hostPort = ?, deployedAt = ? WHERE userId = ?").run(hostPort, new Date().toISOString(), userId);
 }
 
+function insertFormSubmission(userId, dataJson, ip) {
+  db.prepare("INSERT INTO form_submissions (userId, data, ip, createdAt) VALUES (?, ?, ?, ?)").run(userId, dataJson, ip, new Date().toISOString());
+}
+
+function getFormSubmissions(userId, limit = 100) {
+  return db.prepare("SELECT id, data, ip, createdAt FROM form_submissions WHERE userId = ? ORDER BY id DESC LIMIT ?").all(userId, limit);
+}
+
 const RATE_LIMITS = {
   "/register": { max: 5, windowMs: 60 * 60 * 1000 },
   "/upload": { max: 20, windowMs: 60 * 60 * 1000 },
+  "/forms": { max: 30, windowMs: 60 * 60 * 1000 },
 };
 
 function rateLimit(routeKey) {
@@ -213,6 +221,46 @@ async function updateCaddyRoute(user) {
     });
   }
 }
+
+app.post("/forms/:userId/submit", rateLimit("/forms"), (req, res) => {
+  const { userId } = req.params;
+  const user = getUserById(userId);
+  if (!user) return res.status(404).json({ error: "sitio no encontrado" });
+
+  const body = { ...req.body };
+
+  if (body._gotcha) {
+    return res.json({ success: true });
+  }
+  delete body._gotcha;
+
+  if (!body || Object.keys(body).length === 0) {
+    return res.status(400).json({ error: "el formulario está vacío" });
+  }
+
+  const ip = req.ip || req.connection.remoteAddress || "unknown";
+  insertFormSubmission(userId, JSON.stringify(body), ip);
+
+  res.json({ success: true });
+});
+
+app.get("/forms/:userId", (req, res) => {
+  const { userId } = req.params;
+  const user = getUserById(userId);
+  if (!user) return res.status(404).json({ error: "usuario no encontrado" });
+  if (req.headers["x-api-key"] !== user.apiKey) {
+    return res.status(403).json({ error: "api key inválida" });
+  }
+
+  const submissions = getFormSubmissions(userId).map((s) => ({
+    id: s.id,
+    data: JSON.parse(s.data),
+    ip: s.ip,
+    createdAt: s.createdAt,
+  }));
+
+  res.json({ count: submissions.length, submissions });
+});
 
 app.get("/status/:userId", (req, res) => {
   const user = getUserById(req.params.userId);
