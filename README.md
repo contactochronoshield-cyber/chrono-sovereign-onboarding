@@ -81,3 +81,8 @@ El sistema incluye rutinas automáticas de *Hardening* (`core/audit/security_aud
 
 ## 🌌 Capa 8: Chrono Quantum-Shield & Radio-Mesh (PQC)
 Implementación experimental de criptografía post-cuántica ligera optimizada para nodos móviles (Termux) y hardware de borde (N100), garantizando que la red soberana de Latinoamérica sea inmune a la futura intercepción por computación cuántica, con capacidad de operar fuera de línea mediante mallas de radiofrecuencia.
+
+---
+
+## 🎓 Academic Mesh Routing (Lab-Grade P2P)
+Módulo de enrutamiento mallado dinámico inspirado en investigaciones de redes ad-hoc de laboratorios universitarios (como protocolos de optimización de enlaces de vecinos), garantizando que la red de nodos hermanos en Latinoamérica mantenga alta disponibilidad sin depender de la infraestructura tradicional de Internet.
