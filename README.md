@@ -91,3 +91,8 @@ Módulo de enrutamiento mallado dinámico inspirado en investigaciones de redes 
 
 ## 🧬 Ephemeral & Immutable Container Architecture
 Sistema de orquestación de contenedores de borde donde cada instancia desplegada para PyMEs es totalmente efímera, destruyéndose y regenerándose criptográficamente de manera automática cada 24 horas a partir de una imagen base inmutable. Esto elimina por completo la persistencia de ataques y la necesidad de parches manuales.
+
+---
+
+## 🤖 ChronoArch Agent (AI Sovereign Bridge)
+Integración nativa con la red de islas latinas **Archipelag.io** mediante una interfaz compatible con OpenAI, combinada con un *fallback* automático a **Ollama** en el nodo local (Beelink N100 / Termux). Permite procesamiento de IA distribuida sin depender de corporaciones estadounidenses o garras de Big Tech.
