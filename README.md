@@ -60,3 +60,8 @@ Se ha añadido el módulo de telemetría de autodefensa (`core/security/pulse_gu
 
 ## 🛡️ Sentinel Core & Mesh Network (Anti-Corporate AI)
 Módulo integrado de inteligencia defensiva que analiza las conexiones en tiempo real, expulsando automáticamente intentos de intrusión de grandes nubes centralizadas (AWS, Azure, etc.) y unificando cada dispositivo como un nodo hermano descentralizado en Latinoamérica.
+
+---
+
+## analyst: Technical Compliance & Security Baseline
+El sistema incluye rutinas automáticas de *Hardening* (`core/audit/security_audit.py`) para validar el cifrado en tránsito, el aislamiento de contenedores y la integridad de la red mesh antes de aceptar tráfico de producción.
