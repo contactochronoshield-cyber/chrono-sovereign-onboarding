@@ -111,13 +111,14 @@ class TangibleSovereignEngine:
         """Seals contracts and legal documents with sovereign cryptographic signatures."""
         print(f"\n[+] [Chrono Notary] Sealing legal document: '{document_title}'...")
         content_hash = hashlib.sha3_512(legal_text_content.encode('utf-8')).hexdigest()
-        digital_seal = hmac.new(b"CHRONO-SOVEREIGN-MASTER-SECRET", content_hash.encode('utf-8'), hashlib.sha256).hexdigest()
+        seal_secret = os.getenv("CHRONO_NOTARY_SECRET", "").encode("utf-8")
+        digital_seal = hmac.new(seal_secret, content_hash.encode("utf-8"), hashlib.sha256).hexdigest()
         
         notary_receipt = {
             "document_title": document_title,
             "sha3_fingerprint": content_hash[:40],
             "sovereign_signature": digital_seal[:32],
-            "status": "LEGALLY_BINDING_AND_SEALED",
+            "status": "HASH_SEALED_INTEGRITY_VERIFIED",
             "timestamp": datetime.now().isoformat()
         }
         print(f"  [✓] Document legally sealed. Sovereign Signature: {notary_receipt['sovereign_signature']}")
