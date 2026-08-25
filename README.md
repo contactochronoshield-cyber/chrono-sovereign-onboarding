@@ -55,3 +55,8 @@ Chrono Shield Networks · Bogotá, Colombia
 
 ## 🛡️ Nueva Mejora Integrada: ChronoPulse Guard
 Se ha añadido el módulo de telemetría de autodefensa (`core/security/pulse_guard.py`), diseñado para vigilar los contenedores aislados de 256MB RAM, emitir alertas por Webhook en tiempo real y blindar la infraestructura soberana ante anomalías.
+
+---
+
+## 🛡️ Sentinel Core & Mesh Network (Anti-Corporate AI)
+Módulo integrado de inteligencia defensiva que analiza las conexiones en tiempo real, expulsando automáticamente intentos de intrusión de grandes nubes centralizadas (AWS, Azure, etc.) y unificando cada dispositivo como un nodo hermano descentralizado en Latinoamérica.
