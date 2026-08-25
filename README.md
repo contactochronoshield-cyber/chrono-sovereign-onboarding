@@ -1,16 +1,18 @@
 # Chrono Sovereign & Sovereign Cloud — Fase 2: Infraestructura y Soberanía Digital
 
-> **Autor:** Daniel Gonzales Martínez  
+> **Liderazgo Técnico:** Daniel Gonzales Martínez  
+> **Equipo de Desarrollo y Colaboración:** Andrian, Sebastián, Alexander, Diego, Cood  
+> **Comunidad / Red Asociada:** NetThinking | Pensamiento Colectivo & Chrono Shield Networks  
 > **Proyecto:** Chrono Shield Networks / ChronoGrid Enterprise Architecture  
-> **Estado:** Fase 2 Operativa (Fase 1 completamente depurada)  
+> **Estado:** Fase 2 Operativa  
 
 ---
 
 ## 🚀 Descripción General
 
-**Chrono Sovereign** es una plataforma de infraestructura digital independiente, diseñada para ofrecer soberanía tecnológica real a comunidades locales, federaciones transfronterizas entre vecinos, hogares y empresas tradicionales (PYMEs y cooperativas) que las nubes corporativas tradicionales ignoran, encarecen o censuran.
+**Chrono Sovereign** es una plataforma de infraestructura digital independiente, diseñada en colaboración colectiva para ofrecer soberanía tecnológica real a comunidades locales, federaciones transfronterizas entre vecinos, hogares y empresas tradicionales (PYMEs y cooperativas) que las nubes corporativas tradicionales ignoran, encarecen o censuran.
 
-Sin nubes centralizadas gringas, sin dependencias de pasarelas de pago extranjeras abusivas, y con un enfoque tangible: **cero humo, cero IA spettacolare, pura independencia digital.**
+Impulsado por el equipo (*Daniel, Andrian, Sebastián, Alexander, Diego, Cood*) y la comunidad (*NetThinking*), bajo una premisa clara: **cero humo, cero IA spettacolare, pura independencia digital.**
 
 ---
 
@@ -56,3 +58,5 @@ core/
                 ├── launch_and_support/           # Endpoint 1 clic y Support Bot
                 └── veritas_quantum_engine/       # Chrono Veritas Ledger, CSE AI v2.0 & Hardware Pack
 
+E9F
+EOG
