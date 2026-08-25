@@ -120,3 +120,11 @@ El estándar definitivo de IA descentralizada, autónoma y anti-corporativa.
 * **Capa 1 (Edge Local):** Inferencia 100% offline mediante Ollama y modelos open-weight en nodos de borde.
 * **Capa 2 (Mesh P2P Latam):** Sincronización de conocimiento distribuido mediante Archipelag.io, CRDTs y consenso BFT sin servidores centrales.
 * **Capa 3 (Sentinel AI & Ghost Mode):** Ciberseguridad autónoma con ChronoPulse Guard 2.0, bloqueo preventivo de telemetría a Big Tech y blindaje Post-Quantum (ML-KEM/ML-DSA).
+
+---
+
+## 🕊️ Chrono Peace Guardian (Chrono Paz Soberana)
+Módulo humanitario y pro-paz diseñado para ONGs y redes de apoyo en zonas de conflicto. Opera de manera 100% descentralizada y soberana sobre la red mesh:
+* **Detección Temprana de Escalada:** Análisis de discursos e incitación basado en la Declaración Universal de Derechos Humanos (UDHR) con blindaje Ghost Mode.
+* **Mapeo de Ayuda Descentralizado:** Registro de necesidades urgentes (agua, alimentos, medicina) con *trust scoring* comunitario y sincronización offline-first mediante CRDTs.
+* **Diálogo de Paz Soberano:** Canales de comunicación anónimos, cifrados y resistentes a la censura para facilitadores de paz, sin intermediarios ni filtración de datos a corporaciones extranjeras.
