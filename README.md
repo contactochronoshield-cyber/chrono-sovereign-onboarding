@@ -76,3 +76,8 @@ El sistema incluye rutinas automáticas de *Hardening* (`core/audit/security_aud
 5. **Edge AI Content Optimizer & SEO:** Generación automática de metadatos y optimización de rendimiento en contenedores aislados.
 6. **Nodos en el Subsuelo (Ghost Backups):** Resiliencia total con respaldos cifrados descentralizados independientes de la red principal.
 7. **Governance & Community Bounty:** Gobernanza soberana para decidir el rumbo de la energía y el desarrollo de la red.
+
+---
+
+## 🌌 Capa 8: Chrono Quantum-Shield & Radio-Mesh (PQC)
+Implementación experimental de criptografía post-cuántica ligera optimizada para nodos móviles (Termux) y hardware de borde (N100), garantizando que la red soberana de Latinoamérica sea inmune a la futura intercepción por computación cuántica, con capacidad de operar fuera de línea mediante mallas de radiofrecuencia.
