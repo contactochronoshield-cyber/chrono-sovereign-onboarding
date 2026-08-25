@@ -96,3 +96,9 @@ Sistema de orquestación de contenedores de borde donde cada instancia desplegad
 
 ## 🤖 ChronoArch Agent (AI Sovereign Bridge)
 Integración nativa con la red de islas latinas **Archipelag.io** mediante una interfaz compatible con OpenAI, combinada con un *fallback* automático a **Ollama** en el nodo local (Beelink N100 / Termux). Permite procesamiento de IA distribuida sin depender de corporaciones estadounidenses o garras de Big Tech.
+
+---
+
+## ⚡ Advanced Resilience: BFT Routing & Offline CRDTs
+* **Lightweight BFT Consensus:** Algoritmo de enrutamiento basado en teoría de grafos y tolerancia a fallos bizantinos para verificar la reputación de los nodos hermanos y aislar comportamientos anómalos de manera autónoma.
+* **Offline-First CRDT Sync:** Mecanismo de sincronización de bases de datos y estados distribuidos sin dependencia de Internet tradicional, permitiendo transferencias mediante redes de baja frecuencia y nodos móviles en Termux.
