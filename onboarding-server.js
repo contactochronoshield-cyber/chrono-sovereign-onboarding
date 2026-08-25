@@ -16,7 +16,18 @@ const DOMAIN_BASE = process.env.DOMAIN_BASE || "chronoshield.cloud";
 const UPLOAD_DIR = path.join(__dirname, "sites");
 const CADDY_ADMIN_URL = process.env.CADDY_ADMIN_URL || "http://localhost:2019";
 
-const CONTAINER_LIMITS = { memory: "256m", cpus: "0.5", storageQuotaMB: 500 };
+const CONTAINER_TIERS = {
+  small: { memory: "256m", cpus: "0.5", storageQuotaMB: 500 },
+  medium: { memory: "512m", cpus: "1", storageQuotaMB: 1500 },
+  large: { memory: "1g", cpus: "1.5", storageQuotaMB: 3000 },
+};
+// Nota de capacidad real (N100, 16GB total): reserva ~2GB para SO/Docker,
+// deja ~14GB usables. Eso da ~50 sitios small, ~28 medium, o ~14 large
+// (o mezcla). No ofrezcas mas "large" de lo que el host soporta.
+function getTier(tierName) {
+  return CONTAINER_TIERS[tierName] || CONTAINER_TIERS.small;
+}
+const CONTAINER_LIMITS = CONTAINER_TIERS.small; // default de compatibilidad
 
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
@@ -120,7 +131,8 @@ function slugify(name) {
 }
 
 app.post("/register", rateLimit("/register"), (req, res) => {
-  const { email, siteName } = req.body;
+  const { email, siteName, tier } = req.body;
+  const selectedTier = ["small", "medium", "large"].includes(tier) ? tier : "small";
 
   if (!email || !siteName) return res.status(400).json({ error: "email y siteName son requeridos" });
   if (!isValidEmail(email)) return res.status(400).json({ error: "el formato del email no es válido" });
