@@ -262,6 +262,51 @@ app.get("/forms/:userId", (req, res) => {
   res.json({ count: submissions.length, submissions });
 });
 
+app.delete("/users/:userId", (req, res) => {
+  const { userId } = req.params;
+  const user = getUserById(userId);
+
+  if (!user) return res.status(404).json({ error: "usuario no encontrado" });
+  if (req.headers["x-api-key"] !== user.apiKey) {
+    return res.status(403).json({ error: "api key invalida" });
+  }
+
+  exec(`docker rm -f ${user.containerName} 2>/dev/null`, () => {
+    const siteDir = path.join(UPLOAD_DIR, user.subdomain);
+    if (fs.existsSync(siteDir)) {
+      fs.rmSync(siteDir, { recursive: true, force: true });
+    }
+
+    db.prepare("DELETE FROM form_submissions WHERE userId = ?").run(userId);
+    db.prepare("DELETE FROM users WHERE userId = ?").run(userId);
+
+    res.json({
+      status: "deleted",
+      message: "Todos tus datos fueron borrados permanentemente: sitio, formularios y cuenta. No queda respaldo.",
+    });
+  });
+});
+
+app.get("/transparency", (req, res) => {
+  const totalUsers = db.prepare("SELECT COUNT(*) as c FROM users").get().c;
+  const deployedSites = db.prepare("SELECT COUNT(*) as c FROM users WHERE status = 'deployed'").get().c;
+  const totalFormSubmissions = db.prepare("SELECT COUNT(*) as c FROM form_submissions").get().c;
+
+  res.json({
+    generatedAt: new Date().toISOString(),
+    totalRegisteredSites: totalUsers,
+    deployedSites,
+    totalFormSubmissions,
+    dataPolicy: {
+      dataLocation: "Bogota, Colombia (nodo propio de Chrono Shield Networks)",
+      thirdPartyAccess: "ninguno",
+      analyticsTracking: "no se usa Google Analytics ni rastreadores de terceros",
+      deletion: "borrado real disponible via DELETE /users/:userId",
+    },
+    limits: CONTAINER_LIMITS,
+  });
+});
+
 app.get("/status/:userId", (req, res) => {
   const user = getUserById(req.params.userId);
   if (!user) return res.status(404).json({ error: "no encontrado" });
