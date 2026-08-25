@@ -1,0 +1,8 @@
+{
+  "integrated_open_source_references": {
+    "mesh_routing": "Inspired by Yggdrasil Network (End-to-end encrypted IPv6 mesh)",
+    "node_discovery": "Adapted from Netbird/WireGuard overlay concepts",
+    "sovereign_backend": "Pocketbase / SQLite lightweight architecture for edge persistence"
+  },
+  "status": "Agnostic & Sovereign-Compatible"
+}
