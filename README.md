@@ -50,3 +50,8 @@ para subir el sitio una vez tengas tu `userId` y `apiKey`.
 
 ---
 Chrono Shield Networks · Bogotá, Colombia
+
+---
+
+## 🛡️ Nueva Mejora Integrada: ChronoPulse Guard
+Se ha añadido el módulo de telemetría de autodefensa (`core/security/pulse_guard.py`), diseñado para vigilar los contenedores aislados de 256MB RAM, emitir alertas por Webhook en tiempo real y blindar la infraestructura soberana ante anomalías.
