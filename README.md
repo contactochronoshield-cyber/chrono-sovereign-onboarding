@@ -86,3 +86,8 @@ Implementación experimental de criptografía post-cuántica ligera optimizada p
 
 ## 🎓 Academic Mesh Routing (Lab-Grade P2P)
 Módulo de enrutamiento mallado dinámico inspirado en investigaciones de redes ad-hoc de laboratorios universitarios (como protocolos de optimización de enlaces de vecinos), garantizando que la red de nodos hermanos en Latinoamérica mantenga alta disponibilidad sin depender de la infraestructura tradicional de Internet.
+
+---
+
+## 🧬 Ephemeral & Immutable Container Architecture
+Sistema de orquestación de contenedores de borde donde cada instancia desplegada para PyMEs es totalmente efímera, destruyéndose y regenerándose criptográficamente de manera automática cada 24 horas a partir de una imagen base inmutable. Esto elimina por completo la persistencia de ataques y la necesidad de parches manuales.
