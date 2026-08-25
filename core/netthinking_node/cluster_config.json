@@ -1,0 +1,22 @@
+{
+  "cluster_name": "Chrono-NetThinking-Core",
+  "max_core_operators": 10,
+  "ecosystem": "Netbirk / NetThinking Collective",
+  "nodes_active": [
+    {"id": "node-daniel-01", "role": "Lead Architect", "location": "Bogotá"},
+    {"id": "node-operator-02", "role": "Mesh Operations", "location": "Latam"},
+    {"id": "node-operator-03", "role": "Security Sentinel", "location": "Latam"},
+    {"id": "node-operator-04", "role": "Field Support", "location": "Latam"},
+    {"id": "node-operator-05", "role": "Node Provisioning", "location": "Latam"},
+    {"id": "node-operator-06", "role": "Encrypted Comms", "location": "Latam"},
+    {"id": "node-operator-07", "role": "Database Persistence", "location": "Latam"},
+    {"id": "node-operator-08", "role": "QA & Testing", "location": "Latam"},
+    {"id": "node-operator-09", "role": "Humanitarian Link", "location": "Latam"},
+    {"id": "node-operator-10", "role": "Gateway Supervisor", "location": "Latam"}
+  ],
+  "netbirk_integration": {
+    "status": "CONNECTED",
+    "sync_mode": "offline-first-crdt",
+    "telemetry_egress": "BLOCKED"
+  }
+}
