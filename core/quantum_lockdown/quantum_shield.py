@@ -1,6 +1,6 @@
 """
 ChronoQuantum Lockdown - Post-Quantum Cryptography (PQC) Engine.
-Tailored for the 10-person core cluster and NetThinking community.
+Implements NIST standards (ML-KEM for key encapsulation and ML-DSA for digital signatures)[span_1](start_span)[span_1](end_span)
 """
 import time
 import hashlib
