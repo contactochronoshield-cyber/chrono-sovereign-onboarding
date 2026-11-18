@@ -179,7 +179,7 @@ app.post("/upload/:userId", rateLimit("/upload"), upload.single("site"), (req, r
 
   const ext = path.extname(req.file.originalname).toLowerCase();
   if (ext === ".zip") {
-    exec(`unzip -o "${req.file.path}" -d "${siteDir}"`, (err) => {
+    exec(`unzip -o -q "${req.file.path}" -d "${siteDir}" && find "${siteDir}" -type l -delete`, (err) => {
       if (err) return res.status(500).json({ error: "error descomprimiendo el sitio" });
       deployContainer(user, siteDir, res);
     });
