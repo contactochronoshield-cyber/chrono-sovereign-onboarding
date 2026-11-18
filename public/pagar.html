@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Planes · Chrono Sovereign Cloud</title>
+<script src="/auth-client.js"></script>
+<style>
+:root{--bg:#05080d;--card:#0b1220;--line:#16314f;--cy:#22d3ee;--tx:#e6f1ff;--mu:#7f93ad;--er:#ff5d6c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Share Tech Mono",ui-monospace,Menlo,Consolas,monospace;padding:20px}
+.w{max-width:420px;margin:0 auto}
+h1{font-family:Orbitron,"Segoe UI",system-ui,sans-serif;font-size:18px;letter-spacing:.08em;color:var(--cy)}
+.p{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:12px}
+.p b{font-size:16px}.p span{display:block;color:var(--mu);margin:6px 0 12px}
+select,button{width:100%;padding:12px;border-radius:8px;font:inherit}
+select{background:#050a14;border:1px solid var(--line);color:var(--tx);margin-bottom:14px}
+button{background:var(--cy);color:#001018;border:0;font-weight:700;cursor:pointer}
+button:disabled{opacity:.5}
+#m{color:var(--er);min-height:18px;font-size:13px}
+</style></head><body><div class="w">
+<h1>ELIGE TU PLAN</h1>
+<select id="s"></select>
+<div id="l"></div>
+<div id="m"></div>
+</div>
+<script>
+var $=function(i){return document.getElementById(i)};
+function msg(t){$("m").textContent=t}
+Promise.all([fetch("/auth/me").then(function(r){return r.json()}),fetch("/pay/plans").then(function(r){return r.json()})])
+.then(function(a){
+  var ids=a[0].userIds||[],plans=a[1];
+  if(!ids.length){msg("Primero crea tu sitio en el registro.");return}
+  ids.forEach(function(id,i){var o=document.createElement("option");o.value=id;o.textContent="Sitio "+(i+1);$("s").appendChild(o)});
+  plans.forEach(function(p){
+    var d=document.createElement("div");d.className="p";
+    var b=document.createElement("b");b.textContent=p.name;
+    var s=document.createElement("span");s.textContent="$"+p.cop.toLocaleString("es-CO")+" COP / mes";
+    var btn=document.createElement("button");btn.textContent="Pagar con Wompi";
+    btn.onclick=function(){
+      btn.disabled=true;msg("");
+      fetch("/pay/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({userId:$("s").value,tier:p.id})})
+      .then(function(r){return r.json()})
+      .then(function(d){if(d.url){location.href=d.url}else{msg(d.error||"Error");btn.disabled=false}})
+      .catch(function(){msg("Sin conexión");btn.disabled=false});
+    };
+    d.appendChild(b);d.appendChild(s);d.appendChild(btn);$("l").appendChild(d);
+  });
+});
+</script></body></html>

@@ -11,3 +11,4 @@ __pycache__/
 auth-data.json
 chrono-sentinel-app/
 srv.log
+payments-data.json

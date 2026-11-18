@@ -14,6 +14,7 @@ const auth = require("./auth");
 app.use(auth.router);
 app.use(auth.guard);
 app.use("/storage", require("./storage.routes"));
+app.use(require("./payments"));
 
 const PORT = process.env.PORT || 4000;
 const DOMAIN_BASE = process.env.DOMAIN_BASE || "chronoshield.cloud";
