@@ -3,3 +3,8 @@ tmp-uploads/
 users.json
 sites/
 *.db
+.env
+__pycache__/
+*.pyc
+.env.*
+!.env.example
