@@ -12,15 +12,16 @@ try {
 
 // PRECIOS EN PESOS COLOMBIANOS POR MES: cámbialos aquí
 const PLANS = {
-  small: { name: "Semilla", cop: 29900 },
-  medium: { name: "Escudo", cop: 69900 },
-  large: { name: "Soberano", cop: 149900 },
+  small: { name: "Semilla", cop: 29900, ram: "256 MB", cpu: "0.5 CPU" },
+  medium: { name: "Escudo", cop: 69900, ram: "512 MB", cpu: "1 CPU" },
+  large: { name: "Soberano", cop: 149900, ram: "1 GB", cpu: "1.5 CPU" },
 };
 const DAYS = 30;
 
 const FILE = path.join(__dirname, "payments-data.json");
 let db = { pending: {}, paid: {}, subs: {} };
 try { db = JSON.parse(fs.readFileSync(FILE, "utf8")); } catch {}
+db.trials = db.trials || {};
 const save = () => { fs.writeFileSync(FILE + ".tmp", JSON.stringify(db)); fs.renameSync(FILE + ".tmp", FILE); };
 const sha = (s) => crypto.createHash("sha256").update(s).digest("hex");
 const same = (a, b) => a.length === b.length && crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
@@ -28,7 +29,7 @@ const same = (a, b) => a.length === b.length && crypto.timingSafeEqual(Buffer.fr
 const router = express.Router();
 
 router.get("/pay/plans", (req, res) =>
-  res.json(Object.entries(PLANS).map(([id, p]) => ({ id, name: p.name, cop: p.cop }))));
+  res.json(Object.entries(PLANS).map(([id, p]) => ({ id, name: p.name, cop: p.cop, ram: p.ram, cpu: p.cpu }))));
 
 router.post("/pay/checkout", (req, res) => {
   const acc = req.account;
@@ -88,4 +89,20 @@ router.get("/pay/status/:userId", (req, res) => {
   res.json({ active: !!s && new Date(s.until) > new Date(), tier: s && s.tier, until: s && s.until });
 });
 
+// Acceso: pago vigente, prueba gratis (una por correo) o correo exento
+function access(user, create) {
+  const e = String(user.email || "").toLowerCase();
+  const free = (process.env.FREE_EMAILS || "").toLowerCase().split(",").map((x) => x.trim()).filter(Boolean);
+  if (e && free.includes(e)) return { ok: true, tier: "large", kind: "free" };
+  const s = db.subs[user.userId];
+  if (s && new Date(s.until) > new Date()) return { ok: true, tier: s.tier, kind: "paid", until: s.until };
+  const days = Number(process.env.TRIAL_DAYS === undefined ? 7 : process.env.TRIAL_DAYS);
+  if (days > 0 && e) {
+    let t = db.trials[e];
+    if (!t && create) { t = db.trials[e] = { userId: user.userId, until: new Date(Date.now() + days * 864e5).toISOString() }; save(); }
+    if (t && t.userId === user.userId && new Date(t.until) > new Date()) return { ok: true, tier: "small", kind: "trial", until: t.until };
+  }
+  return { ok: false };
+}
 module.exports = router;
+module.exports.access = access;

@@ -14,7 +14,8 @@ const auth = require("./auth");
 app.use(auth.router);
 app.use(auth.guard);
 app.use("/storage", require("./storage.routes"));
-app.use(require("./payments"));
+const payments = require("./payments");
+app.use(payments);
 
 const PORT = process.env.PORT || 4000;
 const DOMAIN_BASE = process.env.DOMAIN_BASE || "chronoshield.cloud";
@@ -200,10 +201,13 @@ function findFreePort(callback) {
 }
 
 function deployContainer(user, siteDir, res) {
+  const access = payments.access(user, true);
+  if (!access.ok) return res.status(402).json({ error: "Necesitas un plan activo para desplegar", pagar: "/pagar.html" });
+  const LIM = getTier(access.tier);
   findFreePort((hostPort) => {
     const dockerCmd = [
-      "docker run -d", `--name ${user.containerName}`, `--memory=${CONTAINER_LIMITS.memory}`,
-      `--cpus=${CONTAINER_LIMITS.cpus}`, "--restart unless-stopped", `-p 127.0.0.1:${hostPort}:80`,
+      "docker run -d", `--name ${user.containerName}`, `--memory=${LIM.memory}`, `--memory-swap=${LIM.memory}`,
+      `--cpus=${LIM.cpus}`, "--restart unless-stopped", `-p 127.0.0.1:${hostPort}:80`,
       `-v ${siteDir}:/usr/share/nginx/html:ro`, "nginx:alpine",
     ].join(" ");
 
@@ -336,3 +340,41 @@ app.listen(PORT, () => {
   console.log(`Dominio base: ${DOMAIN_BASE}`);
   console.log(`Base de datos: chrono_sovereign.db (SQLite)`);
 });
+
+// --- Suscripciones: aplica los límites del plan y apaga lo vencido (cada 10 min)
+function sweepSubscriptions() {
+  let rows = [];
+  try { rows = db.prepare("SELECT userId, email, containerName FROM users WHERE containerName IS NOT NULL").all(); }
+  catch (e) { console.error("sweep:", e.message); return; }
+  for (const u of rows) {
+    if (!/^csc-[a-z0-9-]+$/.test(u.containerName)) continue;
+    const a = payments.access(u, false);
+    if (a.ok) {
+      const t = getTier(a.tier);
+      exec(`docker update --memory=${t.memory} --memory-swap=${t.memory} --cpus=${t.cpus} ${u.containerName} && docker start ${u.containerName}`, () => {});
+    } else {
+      exec(`docker stop ${u.containerName}`, () => {});
+    }
+  }
+}
+setInterval(sweepSubscriptions, 10 * 60 * 1000);
+setTimeout(sweepSubscriptions, 15 * 1000);
+
+// --- Suscripciones: aplica los límites del plan y apaga lo vencido (cada 10 min)
+function sweepSubscriptions() {
+  let rows = [];
+  try { rows = db.prepare("SELECT userId, email, containerName FROM users WHERE containerName IS NOT NULL").all(); }
+  catch (e) { console.error("sweep:", e.message); return; }
+  for (const u of rows) {
+    if (!/^csc-[a-z0-9-]+$/.test(u.containerName)) continue;
+    const a = payments.access(u, false);
+    if (a.ok) {
+      const t = getTier(a.tier);
+      exec(`docker update --memory=${t.memory} --memory-swap=${t.memory} --cpus=${t.cpus} ${u.containerName} && docker start ${u.containerName}`, () => {});
+    } else {
+      exec(`docker stop ${u.containerName}`, () => {});
+    }
+  }
+}
+setInterval(sweepSubscriptions, 10 * 60 * 1000);
+setTimeout(sweepSubscriptions, 15 * 1000);

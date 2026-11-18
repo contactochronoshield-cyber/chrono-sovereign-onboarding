@@ -32,9 +32,9 @@ Promise.all([fetch("/auth/me").then(function(r){return r.json()}),fetch("/pay/pl
   ids.forEach(function(id,i){var o=document.createElement("option");o.value=id;o.textContent="Sitio "+(i+1);$("s").appendChild(o)});
   plans.forEach(function(p){
     var d=document.createElement("div");d.className="p";
-    var b=document.createElement("b");b.textContent=p.name;
+    var b=document.createElement("b");b.textContent=p.name+(p.id==="medium"?" · Más popular":"");
     var s=document.createElement("span");s.textContent="$"+p.cop.toLocaleString("es-CO")+" COP / mes";
-    var btn=document.createElement("button");btn.textContent="Pagar con Wompi";
+    var k=document.createElement("span");k.textContent=p.ram+" de RAM · "+p.cpu;var btn=document.createElement("button");btn.textContent="Pagar con Wompi";
     btn.onclick=function(){
       btn.disabled=true;msg("");
       fetch("/pay/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({userId:$("s").value,tier:p.id})})
@@ -42,7 +42,7 @@ Promise.all([fetch("/auth/me").then(function(r){return r.json()}),fetch("/pay/pl
       .then(function(d){if(d.url){location.href=d.url}else{msg(d.error||"Error");btn.disabled=false}})
       .catch(function(){msg("Sin conexión");btn.disabled=false});
     };
-    d.appendChild(b);d.appendChild(s);d.appendChild(btn);$("l").appendChild(d);
+    d.appendChild(b);d.appendChild(s);d.appendChild(k);d.appendChild(btn);$("l").appendChild(d);
   });
 });
 </script></body></html>
