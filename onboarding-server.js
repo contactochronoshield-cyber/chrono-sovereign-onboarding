@@ -10,6 +10,10 @@ const app = express();
 app.set("trust proxy", true);
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
+const auth = require("./auth");
+app.use(auth.router);
+app.use(auth.guard);
+app.use("/storage", require("./storage.routes"));
 
 const PORT = process.env.PORT || 4000;
 const DOMAIN_BASE = process.env.DOMAIN_BASE || "chronoshield.cloud";

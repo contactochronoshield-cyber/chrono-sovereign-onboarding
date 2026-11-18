@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Acceso · Chrono Sovereign Cloud</title>
+<style>
+:root{--bg:#05080d;--card:#0b1220;--line:#16314f;--cy:#22d3ee;--tx:#e6f1ff;--mu:#7f93ad;--er:#ff5d6c}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--tx);font-family:"Share Tech Mono",ui-monospace,Menlo,Consolas,monospace;padding:16px}
+.c{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px}
+h1{margin:0 0 4px;font-family:Orbitron,"Segoe UI",system-ui,sans-serif;font-size:18px;letter-spacing:.08em;color:var(--cy)}
+p{color:var(--mu);font-size:13px;margin:0 0 18px}
+.t{display:flex;gap:8px;margin-bottom:16px}
+.t button{flex:1;padding:10px;background:none;border:1px solid var(--line);color:var(--mu);border-radius:8px;font:inherit;cursor:pointer}
+.t button.on{border-color:var(--cy);color:var(--cy)}
+input{width:100%;padding:12px;margin-bottom:10px;background:#050a14;border:1px solid var(--line);border-radius:8px;color:var(--tx);font:inherit}
+input:focus{outline:none;border-color:var(--cy)}
+.go{width:100%;padding:12px;background:var(--cy);color:#001018;border:0;border-radius:8px;font:inherit;font-weight:700;cursor:pointer}
+.go:disabled{opacity:.5}
+#m{min-height:18px;margin-top:10px;font-size:13px;color:var(--er)}
+small{display:block;margin-top:14px;color:var(--mu);font-size:11px;text-align:center}
+</style></head><body>
+<div class="c">
+<h1>CHRONO SOVEREIGN CLOUD</h1>
+<p>Tu infraestructura, tus datos, tu jurisdicción.</p>
+<div class="t"><button id="bl" class="on">Entrar</button><button id="bs">Crear cuenta</button></div>
+<input id="e" type="email" placeholder="correo" autocomplete="email">
+<input id="p" type="password" placeholder="contraseña (mín. 10 caracteres)" autocomplete="current-password">
+<button class="go" id="go">Entrar</button>
+<div id="m"></div>
+<small>Sin proveedores extranjeros. Tus datos viven en Colombia.</small>
+</div>
+<script>
+var mode="login",$=function(i){return document.getElementById(i)};
+function set(m){mode=m;$("bl").className=m==="login"?"on":"";$("bs").className=m==="signup"?"on":"";$("go").textContent=m==="login"?"Entrar":"Crear cuenta";$("m").textContent=""}
+$("bl").onclick=function(){set("login")};$("bs").onclick=function(){set("signup")};
+$("go").onclick=function(){
+  var b=$("go");b.disabled=true;$("m").textContent="";
+  fetch("/auth/"+mode,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:$("e").value,password:$("p").value})})
+  .then(function(r){return r.json().then(function(d){return{ok:r.ok,d:d}})})
+  .then(function(x){
+    if(!x.ok){$("m").textContent=x.d.error||"Error";b.disabled=false;return}
+    localStorage.setItem("csn_token",x.d.token);
+    var n=new URLSearchParams(location.search).get("next");
+    location.href=(n&&n.charAt(0)==="/"&&n.charAt(1)!=="/")?n:"/registro.html";
+  }).catch(function(){$("m").textContent="Sin conexión con el servidor";b.disabled=false});
+};
+</script></body></html>
