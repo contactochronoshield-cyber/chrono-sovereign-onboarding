@@ -80,6 +80,7 @@ function guard(req, res, next) {
     return next();
   }
   if (req.path.startsWith("/storage") && !acc && !admin) return res.status(401).json({ error: "Inicia sesión" });
+if (req.method === "POST" && req.path.startsWith("/upload/") && req.get("x-api-key")) return next();
   for (const [m, re] of OWNED) {
     const x = req.method === m && re.exec(req.path);
     if (x && !admin && !(acc && acc.userIds.includes(decodeURIComponent(x[1]))))
