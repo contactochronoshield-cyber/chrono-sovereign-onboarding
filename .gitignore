@@ -9,3 +9,4 @@ __pycache__/
 .env.*
 !.env.example
 auth-data.json
+chrono-sentinel-app/
